@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
 
-First, run the development server:
+<div align="center">
+	<img src="./public/logo.svg" alt="Wedinote Logo" width="120" />
+  
+	✨ Wedinote
+	Undangan Digital Pernikahan Modern & Praktis
+</div>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Kegunaan
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Wedinote membantu kamu membuat, mengelola, dan membagikan undangan digital pernikahan dengan mudah dan tampilan yang elegan.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠️ Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+| Teknologi      | Keterangan |
+|---------------|------------|
+| Next.js       | Framework React modern |
+| React         | Library UI utama |
+| TypeScript    | Bahasa pemrograman aman & scalable |
+| Bun           | Runtime JavaScript super cepat |
+| Drizzle*      | ORM typesafe untuk database |
+| Neon*         | PostgreSQL serverless |
+| better-auth*  | Otentikasi modern & aman |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+<sub>*Segera diintegrasikan pada pengembangan berikutnya</sub>
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🎉 Fitur Utama
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- 📝 **Manajemen Undangan** — Buat, edit, hapus undangan digital
+- 🎨 **Template Custom** — Pilih & kustomisasi template undangan
+- 👥 **Manajemen Tamu** — Tambah, edit, filter, hapus tamu undangan
+- 📩 **RSVP Online** — Tamu konfirmasi kehadiran langsung dari web
+- 🔗 **Share & Copy Link** — Bagikan undangan dengan mudah
+- 🌓 **Mode Tampilan** — Ubah mode tampilan undangan
+- ✍️ **Editor Teks** — Rich text & markdown untuk konten undangan
+- 🔒 **Keamanan Data** — Data undangan & tamu tersimpan aman
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🏗️ Rencana Pengembangan
+
+- Integrasi **better-auth** untuk otentikasi lebih baik
+- Migrasi ke **Drizzle** & **Neon** untuk database scalable
+
+---
+
+<div align="center">
+	<b>💡 Siap membuat undangan digital yang memorable? Mulai sekarang di Wedinote!</b>
+	<br/><br/>
+	<i>Untuk pertanyaan atau kontribusi, silakan hubungi pengembang melalui repository ini.</i>
+</div>
