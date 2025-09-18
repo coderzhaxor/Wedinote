@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { Rocket } from "lucide-react";
 import Image from "next/image";
 
@@ -19,9 +20,11 @@ export default function Home() {
         Create beautiful wedding invitation messages, customize them for every
         guest, and share with just one click.
       </p>
-      <Button className="mt-6 hover:cursor-pointer">
-        Create Yours Now <Rocket />
-      </Button>
+      <Link href="/dashboard">
+        <Button className="mt-6 hover:cursor-pointer">
+          Create Yours Now <Rocket />
+        </Button>
+      </Link>
     </main>
   );
 }

@@ -1,11 +1,12 @@
+import Link from "next/link";
 import Image from "next/image";
-import { Button } from "../ui/button";
+import ButtonNavbar from "./ButtonNavbar";
 
 const Navbar = () => {
   return (
     <nav className="bg-white">
       <div className="max-w-4xl mx-auto flex items-center justify-between p-4">
-        <div className="logo">
+        <Link href="/" className="logo">
           <Image
             src="/logo.svg"
             alt="Logo"
@@ -14,13 +15,8 @@ const Navbar = () => {
             className="h-8 w-auto sm:h-8"
             priority
           />
-        </div>
-        <Button
-          variant="outline"
-          className="hover:cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors duration-150 ease-in-out"
-        >
-          Sign In
-        </Button>
+        </Link>
+        <ButtonNavbar />
       </div>
     </nav>
   );
