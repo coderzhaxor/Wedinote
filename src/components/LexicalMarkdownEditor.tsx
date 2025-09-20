@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
@@ -11,9 +10,9 @@ import {
     $getSelection,
     $isRangeSelection,
     $isTextNode,
-    EditorState,
+    type EditorState,
     FORMAT_TEXT_COMMAND,
-    LexicalNode,
+    type LexicalNode,
 } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
