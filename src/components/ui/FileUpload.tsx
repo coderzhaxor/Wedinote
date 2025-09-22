@@ -1,43 +1,33 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, type RefObject } from 'react'
 import { Button } from './button'
 import { CloudUpload } from 'lucide-react'
-import { useState } from 'react'
-import Papa from "papaparse"
+import { contactsToString, parseCsvContacts } from '@/lib/utils'
 
-interface RowData {
-    [key: string]: string
+
+interface FileUploadProps {
+    textareaRef: RefObject<HTMLTextAreaElement | null>
+    disabled?: boolean
 }
 
-interface PapaParseResult<T> {
-    data: T[];
-    errors: Papa.ParseError[];
-    meta: Papa.ParseMeta;
-}
-
-interface PapaParseConfig<T> {
-    header?: boolean;
-    skipEmptyLines?: boolean;
-    complete: (result: PapaParseResult<T>) => void;
-}
-
-const FileUpload = () => {
+const FileUpload = ({ textareaRef, disabled }: FileUploadProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null)
     const uploadFile = () => fileInputRef.current?.click()
-    const [data, setData] = useState<RowData[]>([])
 
-    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0]
-        if (!file) return
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
 
-        Papa.parse<RowData>(file, {
-            header: true, // ambil row pertama sebagai header
-            skipEmptyLines: true,
-            complete: (result: PapaParseResult<RowData>) => {
-                setData(result.data)
-            },
-        } as PapaParseConfig<RowData>)
+        const result = await parseCsvContacts(file);
+        if (textareaRef.current) {
+            textareaRef.current.value = `${textareaRef.current.value}\n${contactsToString(result)}`;
+        }
+
+        // Reset input value so file can be re-selected if needed
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
     }
 
     return (
@@ -56,6 +46,7 @@ const FileUpload = () => {
                 onClick={uploadFile}
                 className='flex items-center cursor-pointer'
                 title='Upload file csv'
+                disabled={disabled}
             >
                 <CloudUpload className="size-4" />
                 Upload File  (CSV)

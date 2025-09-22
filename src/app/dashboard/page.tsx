@@ -20,7 +20,7 @@ const Dashboard = () => {
               <FileText className="-ms-0.5 me-1.5 opacity-60" size={16} aria-hidden="true" />Template Ucapan
             </TabsTrigger>
             <TabsTrigger value="contacts" className="bg-muted overflow-hidden rounded-b-none border-x border-t py-2 data-[state=active]:z-10 data-[state=active]:shadow-none">
-              <BookUser className="-ms-0.5 me-1.5 opacity-60" size={16} aria-hidden="true" />Daftar Kontak
+              <BookUser className="-ms-0.5 me-1.5 opacity-60" size={16} aria-hidden="true" />Daftar Tamu
             </TabsTrigger>
           </TabsList>
           <ScrollBar orientation="horizontal" />

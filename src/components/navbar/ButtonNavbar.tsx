@@ -1,30 +1,55 @@
 "use client"
 
-import { Button } from "../ui/button";
 import Avatar from "./Avatar";
-import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
+import { Button } from "../ui/button";
+import { signOut, useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 
 const ButtonNavbar = () => {
-  const { isAuthenticated, setIsAuthenticated } = useAuth()
+  const { data: session, isPending } = useSession();
+  const [isSigningOut, setIsSigningOut] = useState(false)
+  const router = useRouter();
 
-  const handleAuth = () => setIsAuthenticated(!isAuthenticated);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: false positive
+  const handleLogout = useCallback(async () => {
+    if (isSigningOut) return
+    try {
+      await signOut();
+    } finally {
+      setIsSigningOut(false);
+      router.push("/login");
+    }
+  }, [isSigningOut]);
+
+  // Skeleton component
+  const Skeleton = () => (
+    <div className="animate-pulse">
+      <div className="rounded-full bg-gray-200 h-8 w-8" />
+    </div>
+  );
 
   return (
     <>
-      {!isAuthenticated ? (
+      {isPending || isSigningOut ? (
+        <Skeleton />
+      ) : !session ? (
         <Button
-          onClick={handleAuth}
+          asChild
           variant="outline"
           className="hover:cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors duration-150 ease-in-out"
         >
-          Sign In
+          <Link href="/login" >
+            Sign In
+          </Link>
         </Button>
       ) : (
         <Avatar
-          onClick={handleAuth}
-          name="Alif Januantara Prima"
-          email="ajanuantara@gmail.com"
-          src="https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?q=100&w=64&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          onClick={handleLogout}
+          name={session.user.name}
+          email={session.user.email}
+          src={session.user.image || "https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?q=100&w=64&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
         />
       )}
     </>
