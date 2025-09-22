@@ -12,6 +12,7 @@ export default function Home() {
         width={300}
         height={100}
         className="rounded-lg mt-10"
+        priority
       />
       <h1 className="text-3xl font-bold mt-4 text-zinc-800">
         Welcome To <em>WediNote</em>
