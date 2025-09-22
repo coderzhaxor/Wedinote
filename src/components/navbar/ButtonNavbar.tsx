@@ -14,7 +14,7 @@ const ButtonNavbar = () => {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: false positive
   const handleLogout = useCallback(async () => {
-    if (isSigningOut) return
+    if (isSigningOut) return router.push("/login")
     try {
       await signOut();
     } finally {

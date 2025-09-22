@@ -1,67 +1,80 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { and, eq } from "drizzle-orm";
-import { contacts } from "@/lib/db/schema";
-import { auth } from "@/lib/auth";
+import type { InferSelectModel } from "drizzle-orm";
+import { and, eq, desc } from "drizzle-orm";
 import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { contacts } from "@/lib/db/schema";
 
-type ContactProps = {
-  name: string;
-  phone: string;
-};
+export type Contact = InferSelectModel<typeof contacts>;
 
-// ambil userId dari session
+/** Get userId from session */
 export async function getUserIdFromSession() {
-  const rawHeaders = await headers();
-  const heads = new Headers(rawHeaders);
-  const session = await auth.api.getSession({ headers: heads });
+  const session = await auth.api.getSession({ headers: new Headers(await headers()) });
   if (!session) throw new Error("Unauthorized");
   return session.user.id;
 }
 
-// ambil semua kontak milik user
+/** Get all contacts by user */
 export async function getContacts() {
   const userId = await getUserIdFromSession();
-
-  return await db
+  return db
     .select()
     .from(contacts)
     .where(eq(contacts.userId, userId))
-    .orderBy(contacts.createdAt);
+    .orderBy(desc(contacts.createdAt));
 }
 
-export async function addContacts(contactList: ContactProps[]) {
+/** Add contacts (batch insert with conflict ignore) */
+export async function addContacts(contactList: { name: string; phone?: string | null }[]) {
   const userId = await getUserIdFromSession();
 
   const contactsToInsert = contactList
-    .filter(c => c.name?.trim() !== "" || (c.phone && c.phone !== "+628xxxxxxxxx"))
-    .map((c) => {
-      const base = { userId, name: c.name };
-      if (c.phone && c.phone !== "+628xxxxxxxxx") {
-        return { ...base, phone: c.phone };
-      }
-      return base; // tidak sertakan phone
-    });
+    .filter((c) => c.name?.trim() || (c.phone && c.phone !== "+628xxxxxxxxx"))
+    .map((c) => ({
+      userId,
+      name: c.name,
+      ...(c.phone && c.phone !== "+628xxxxxxxxx" ? { phone: c.phone } : {}),
+    }));
 
-  if (contactsToInsert.length === 0) return getContacts(); // tidak ada data valid
+  if (!contactsToInsert.length) {
+    return { inserted: [], all: await getContacts() };
+  }
 
-  // insert batch dengan onConflictDoNothing
-  await db
+  const inserted = await db
     .insert(contacts)
     .values(contactsToInsert)
-    .onConflictDoNothing({
-      target: [contacts.userId, contacts.phone],
-    });
+    .onConflictDoNothing({ target: [contacts.userId, contacts.phone] })
+    .returning();
+
+  return { inserted, all: await getContacts() };
+}
+
+/** Delete single contact */
+export async function deleteContact(contactId: number) {
+  const userId = await getUserIdFromSession();
+  await db
+    .delete(contacts)
+    .where(and(eq(contacts.id, contactId), eq(contacts.userId, userId)));
 
   return getContacts();
 }
 
-export async function deleteContact(contactId: number) {
+/** Delete all contacts */
+export async function deleteAllContacts() {
   const userId = await getUserIdFromSession();
-  await db.delete(contacts).where(and(
-    eq(contacts.id, contactId),
-    eq(contacts.userId, userId)
-  ));
+  await db.delete(contacts).where(eq(contacts.userId, userId));
+  return getContacts();
+}
+
+/** Update contact */
+export async function updateContact(contactId: number, data: { name: string; phone?: string | null }) {
+  const userId = await getUserIdFromSession();
+  await db
+    .update(contacts)
+    .set(data)
+    .where(and(eq(contacts.id, contactId), eq(contacts.userId, userId)));
+
   return getContacts();
 }

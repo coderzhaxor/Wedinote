@@ -12,22 +12,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { SquarePen } from "lucide-react"
+import type { Contact } from "@/hooks/useContacts"
 
 export default function EditButton({
-    initialName,
-    initialPhone,
+    contact,
     onSave,
 }: {
-    initialName: string
-    initialPhone: string
-    onSave: (data: { name: string; phone: string }) => void
+    contact: Contact,
+    onSave: (data: { name: string; phone?: string | null }) => void
 }) {
-    const [name, setName] = useState(initialName)
-    const [phone, setPhone] = useState(initialPhone)
-
-    const handleSave = () => {
-        onSave({ name, phone })
-    }
+    const [name, setName] = useState(contact.name)
+    const [phone, setPhone] = useState(contact.phone ?? "")
 
     return (
         <Dialog>
@@ -68,7 +63,9 @@ export default function EditButton({
                     <DialogClose asChild>
                         <Button variant="outline">Batal</Button>
                     </DialogClose>
-                    <Button onClick={handleSave}>Simpan</Button>
+                    <DialogClose asChild>
+                        <Button onClick={() => onSave({ name, phone })}>Simpan</Button>
+                    </DialogClose>
                 </div>
             </DialogContent>
         </Dialog>

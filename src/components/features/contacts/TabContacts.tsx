@@ -1,21 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useRef, useState } from "react";
 
-import { addContacts, deleteContact, getContacts } from "@/actions/contacts";
 import { Button } from "@/components/ui/button";
 import FileUpload from "@/components/ui/FileUpload";
 import Search from "@/components/ui/Search";
+import { useContacts } from "@/hooks/useContacts";
 import { parseContacts } from "@/lib/utils";
 
 import CardContact from "./CardContact";
 import ContactLoading from "./ContactLoading";
+import DeleteAllContacts from "./DeleteAllContacts";
 
-interface ContactProps {
-    id: number;
-    name: string;
-    phone: string | null;
-}
 
 const CONTACT_PLACEHOLDER = `Pisahkan kontak dengan enter, contoh:
 Bapak Sodikin (089234293935)
@@ -25,58 +21,37 @@ dst..`;
 
 const TabContacts = () => {
     const contactAreaRef = useRef<HTMLTextAreaElement>(null);
-    const [contacts, setContacts] = useState<ContactProps[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isPending, startTransition] = useTransition();
+    const { contactsQuery, addMutation, deleteMutation, updateMutation } = useContacts();
 
-    useEffect(() => {
-        const fetchInitialContacts = async () => {
-            try {
-                const initialContacts = await getContacts();
-                setContacts(initialContacts);
-            } catch (error) {
-                console.error("Failed to fetch contacts:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchInitialContacts();
-    }, []);
+    const [search, setSearch] = useState<string>("")
 
     const handleAddContacts = () => {
-        startTransition(async () => {
-            const value = contactAreaRef.current?.value ?? "";
-            if (!value.trim()) return;
+        const value = contactAreaRef.current?.value ?? "";
+        if (!value.trim()) return;
 
-            try {
-                const parsed = parseContacts(value);
-                const savedContacts = await addContacts(parsed);
+        const parsed = parseContacts(value); // parse sekali di UI
+        if (parsed.length === 0) return;
 
-                setContacts(savedContacts);
-
-                // Clear textarea
-                if (contactAreaRef.current) {
-                    contactAreaRef.current.value = "";
-                }
-            } catch (error) {
-                console.error("Failed to add contacts:", error);
-                // TODO: Add toast notification for error
-            }
-        });
+        addMutation.mutate(parsed);
+        if (contactAreaRef.current) {
+            contactAreaRef.current.value = "";
+        }
     };
 
-    const handleDelete = async (contactId: number) => {
-        await deleteContact(contactId)
-        setContacts((prev) => prev.filter((c) => c.id !== contactId))
-    }
-
-    const showLoading = isLoading || isPending;
+    // filter contacts by search
+    const filteredContacts =
+        contactsQuery.data?.filter((c) => {
+            const keyword = search.toLowerCase();
+            return (
+                c.name.toLowerCase().includes(keyword) ||
+                c.phone?.toLowerCase().includes(keyword)
+            );
+        }) ?? [];
 
     return (
         <>
-            {/* Add Contacts Section */}
-            <div className="p-6 border rounded-2xl mt-4">
+            {/* Add Contacts */}
+            <div className="mt-4 rounded-2xl border p-6">
                 <h4 className="font-medium">Tambah Daftar Tamu</h4>
 
                 <p className="mt-4 text-sm text-muted-foreground">
@@ -85,48 +60,54 @@ const TabContacts = () => {
 
                 <textarea
                     ref={contactAreaRef}
-                    name="contacts-list"
                     id="contacts-list"
-                    className="p-4 bg-white w-full border mt-2 rounded-md resize-y min-h-[160px]"
+                    className="mt-2 min-h-[160px] w-full resize-y rounded-md border bg-white p-4"
                     placeholder={CONTACT_PLACEHOLDER}
-                    disabled={isPending}
+                    disabled={addMutation.isPending}
                 />
 
-                <p className="text-xs text-muted-foreground mb-4">
+                <p className="mb-4 text-xs text-muted-foreground">
                     Masukkan nama dan nomor telepon, pisahkan dengan tanda kurung untuk
-                    memasukan nomor, dan enter untuk menambah tamu baru.
+                    memasukkan nomor, dan enter untuk menambah tamu baru.
                 </p>
 
-                <div className="flex mt-2 gap-x-2 items-stretch">
-                    <Button onClick={handleAddContacts} disabled={isPending}>
-                        {isPending ? "Menyimpan..." : "Tambahkan Daftar Tamu"}
+                <div className="mt-2 flex items-stretch gap-x-2">
+                    <Button onClick={handleAddContacts} disabled={addMutation.isPending}>
+                        {addMutation.isPending ? "Menyimpan..." : "Tambahkan Daftar Tamu"}
                     </Button>
-                    <FileUpload textareaRef={contactAreaRef} disabled={isPending} />
+
+                    <FileUpload textareaRef={contactAreaRef} disabled={addMutation.isPending} />
                 </div>
             </div>
 
-            {/* Contacts List Section */}
-            <div className="p-6 border rounded-2xl mt-6">
-                <Search className="max-w-3xs" placeholder="Search contacts" />
+            {/* Contact List */}
+            <div className="mt-6 rounded-2xl border p-6">
+                <div className="flex items-center justify-between gap-x-4">
+                    <Search
+                        className="max-sm:flex-1 sm:max-w-sm"
+                        placeholder="Search contacts by name or phone"
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                    <DeleteAllContacts />
+                </div>
 
-                {showLoading ? (
+                {contactsQuery.isPending ? (
                     <ContactLoading />
+                ) : contactsQuery.data && contactsQuery.data.length > 0 ? (
+                    <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        {filteredContacts.map((contact) => (
+                            <CardContact
+                                key={contact.id}
+                                contact={contact}
+                                onDelete={() => deleteMutation.mutate(contact.id)}
+                                onSave={(id, data) => updateMutation.mutate({ id, data })}
+                            />
+                        ))}
+                    </div>
                 ) : (
-                    <div className="grid grid-cols-3 gap-6 mt-6">
-                        {contacts.length > 0 ? (
-                            contacts.map((contact) => (
-                                <CardContact
-                                    key={contact.id}
-                                    contact={contact}
-                                    onDelete={handleDelete}
-                                />
-                            ))
-                        ) : (
-                            <div className="col-span-3 text-center py-8 text-muted-foreground border-2 border-dashed border-red-200 bg-red-50 rounded-md">
-                                <p className="text-lg font-medium">Belum ada kontak</p>
-                                <p className="text-sm mt-1">Tambahkan kontak pertama Anda!</p>
-                            </div>
-                        )}
+                    <div className="mt-6 rounded-md border-2 border-dashed border-red-200 bg-red-50 py-8 text-center text-muted-foreground col-span-3">
+                        <p className="text-lg font-medium">Belum ada kontak</p>
+                        <p className="mt-1 text-sm">Tambahkan kontak pertama Anda!</p>
                     </div>
                 )}
             </div>

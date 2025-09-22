@@ -1,20 +1,14 @@
-import { Trash2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import EditButton from "./CopyButton"
-
-
-interface CardContactProps {
-    id: number
-    name: string
-    phone: string | null
-}
+import EditButton from "./EditButton"
+import type { Contact } from "@/hooks/useContacts";
+import DeleteContact from "./DeleteContact";
 
 interface CardContactComponentProps {
-    contact: CardContactProps;
+    contact: Contact;
     onDelete?: (id: number) => void;
+    onSave?: (id: number, data: { name: string; phone?: string | null }) => void;
 }
 
-const CardContact = ({ contact, onDelete }: CardContactComponentProps) => {
+const CardContact = ({ contact, onDelete, onSave }: CardContactComponentProps) => {
 
 
     return (
@@ -31,15 +25,13 @@ const CardContact = ({ contact, onDelete }: CardContactComponentProps) => {
             <div className="card-footer py-2 px-2 border-t bg-gray-50">
                 <div className="flex items-center gap-2 *:flex-1">
                     <EditButton
-                        initialName={contact.name}
-                        initialPhone={contact.phone ?? ""}
-                        onSave={(data) => console.log("Updated:", data)}
+                        contact={contact}
+                        onSave={(data) => onSave?.(contact.id, data)}
                     />
-                    <Button
-                        onClick={() => onDelete?.(contact.id)}
-                        className="inline-flex items-center hover:cursor-pointer">
-                        <Trash2 /> Hapus
-                    </Button>
+                    <DeleteContact
+                        contact={contact}
+                        onDelete={onDelete}
+                    />
                 </div>
             </div>
         </div>
