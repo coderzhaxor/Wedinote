@@ -2,10 +2,8 @@
 
 <div align="center">
 	<img src="./public/logo.svg" alt="Wedinote Logo" width="120" />
-  
-	✨ Wedinote
-	Undangan Digital Pernikahan Modern & Praktis
 </div>
+<img src="./public/home.png" alt="Screenshot" width="100%" />
 
 ---
 

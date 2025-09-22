@@ -48,7 +48,6 @@ const TabTemplates = () => {
         ])
     }
 
-
     return (
         <div className="p-6 border rounded-2xl flex flex-col gap-2">
             <h4 className="font-medium">Variabel Template</h4>
