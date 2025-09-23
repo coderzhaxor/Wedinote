@@ -1,7 +1,7 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import DOMPurify from "isomorphic-dompurify";
 import Papa from "papaparse";
-import sanitize from 'dompurify';
+import { twMerge } from "tailwind-merge";
 
 export interface Contact {
   name: string;
@@ -40,7 +40,7 @@ export const parseWhatsappMarkdown = (text: string): string => {
     .replace(/\n/g, "<br/>");
 
 
-  return sanitize.sanitize(formatted);
+  return DOMPurify.sanitize(formatted);
 }
 
 
@@ -51,7 +51,7 @@ export const parseContacts = (input: string) => {
     .map(line => {
       const match = line.match(/^(.*?)(?:\((.*?)\))?$/);
 
-      let name = match?.[1]?.trim() ?? "";
+      const name = match?.[1]?.trim() ?? "";
       let phone = match?.[2]?.trim() ?? "08xxxxxxxxx";
 
       // Normalisasi nomor telepon
@@ -73,7 +73,7 @@ export const parseCsvContacts = (file: File): Promise<Contact[]> => {
       header: true,
       skipEmptyLines: true,
       complete: (results) => {
-        const parsed = results.data as any[];
+        const parsed = results.data as Contact[];
 
         const formatted: Contact[] = parsed.map((row) => ({
           name: row.name?.trim() ?? "",

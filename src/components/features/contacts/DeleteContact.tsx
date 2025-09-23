@@ -32,7 +32,7 @@ const DeleteContact = ({ contact, onDelete }: DeleteContactProps) => {
                     Apakah kamu yakin ingin menghapus kontak {contact.name}?
                 </DialogDescription>
                 <DialogFooter className="mt-6">
-                    <DialogClose>
+                    <DialogClose asChild>
                         <Button
                             className="hover:cursor-pointer"
                             variant="outline"
@@ -40,7 +40,7 @@ const DeleteContact = ({ contact, onDelete }: DeleteContactProps) => {
                             Batalkan
                         </Button>
                     </DialogClose>
-                    <DialogClose>
+                    <DialogClose asChild>
                         <Button
                             className="hover:cursor-pointer"
                             onClick={() => onDelete?.(contact.id)}
