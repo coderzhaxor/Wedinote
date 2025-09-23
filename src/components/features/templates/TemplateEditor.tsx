@@ -12,7 +12,7 @@ export default function TemplateEditor() {
     };
 
     return (
-        <div className="space-y-6 mt-10">
+        <div className="mt-10">
             <Card>
                 <CardHeader>
                     <CardTitle>Template Editor</CardTitle>

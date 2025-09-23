@@ -8,11 +8,11 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { $getRoot } from 'lexical';
 import type { EditorState } from 'lexical';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import parse from 'html-react-parser';
 
 import ToolbarPlugin from './ToolbarPlugin';
-import OutputPlugin from './OutputPlugin';
 import TemplateInsertPlugin from './TemplateInsertPlugin';
+import { parseWhatsappMarkdown } from '@/lib/utils';
 
 function onError(error: Error) {
     console.error(error);
@@ -25,6 +25,7 @@ interface LexicalProps {
 export default function Lexical({ onContentChange }: LexicalProps) {
     const [editorContent, setEditorContent] = useState('');
     const [shouldInsertTemplate, setShouldInsertTemplate] = useState(false);
+    const [isPreview, setIsPreview] = useState(false);
 
     const handleInsertTemplate = () => {
         setShouldInsertTemplate(true);
@@ -34,8 +35,12 @@ export default function Lexical({ onContentChange }: LexicalProps) {
         setShouldInsertTemplate(false);
     };
 
+    const handlePreview = () => {
+        setIsPreview((prev) => !prev);
+    };
+
     const initialConfig = {
-        namespace: 'MyEditor',
+        namespace: 'WhatsApp Template Editor',
         onError,
     };
 
@@ -50,49 +55,42 @@ export default function Lexical({ onContentChange }: LexicalProps) {
         });
     };
 
-    // Function to get formatted content (with markdown)
-    const getFormattedContent = () => {
-        console.log('Current content:', editorContent);
-        alert(`Current content: ${editorContent}`);
-    };
+    const Wrapper = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className} >{children}</div>;
 
     return (
         <div className="border rounded-md">
+
+
             <LexicalComposer initialConfig={initialConfig}>
-                <ToolbarPlugin onInsertTemplate={handleInsertTemplate} />
-                <RichTextPlugin
-                    contentEditable={
-                        <ContentEditable
-                            className="min-h-[200px] p-4 outline-none border-b"
-                        />
-                    }
-                    ErrorBoundary={LexicalErrorBoundary}
-                />
+                <ToolbarPlugin onPreview={handlePreview} isPreview={isPreview} onInsertTemplate={handleInsertTemplate} />
+                {isPreview ? (
+                    <Wrapper
+                        className='min-h-[200px] w-full p-4 bg-gray-100 text-gray-800 border-none'
+                    >
+                        {parse(parseWhatsappMarkdown(editorContent))}
+                    </Wrapper>
+
+                ) : (
+                    <RichTextPlugin
+                        contentEditable={
+                            <ContentEditable
+                                className="min-h-[200px] p-4 outline-none"
+                            />
+                        }
+                        ErrorBoundary={LexicalErrorBoundary}
+                    />
+                )}
+
                 <OnChangePlugin onChange={onChange} />
                 <TemplateInsertPlugin
                     shouldInsert={shouldInsertTemplate}
                     onInserted={handleTemplateInserted}
                 />
-                <OutputPlugin onContentChange={(content) => {
-                    setEditorContent(content);
-                    onContentChange?.(content);
-                }} />
+
                 <HistoryPlugin />
                 <AutoFocusPlugin />
             </LexicalComposer>
 
-            {/* Output Section */}
-            <div className="p-4 bg-gray-50 border-t">
-                <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-sm">Live Output:</h4>
-                    <Button onClick={getFormattedContent} size="sm" variant="outline">
-                        Show Content
-                    </Button>
-                </div>
-                <div className="bg-white p-3 rounded border text-sm font-mono">
-                    {editorContent || 'Type something in the editor...'}
-                </div>
-            </div>
         </div>
     );
 }

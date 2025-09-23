@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import Papa from "papaparse";
-import DOMPurify from "dompurify";
+import sanitize from 'dompurify';
 
 export interface Contact {
   name: string;
@@ -40,7 +40,7 @@ export const parseWhatsappMarkdown = (text: string): string => {
     .replace(/\n/g, "<br/>");
 
 
-  return DOMPurify.sanitize(formatted);
+  return sanitize.sanitize(formatted);
 }
 
 

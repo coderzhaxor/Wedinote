@@ -12,14 +12,16 @@ import {
     CAN_REDO_COMMAND,
     $getRoot
 } from "lexical";
-import { Bold, Eraser, FileText, Italic, Redo2, Strikethrough, Undo2 } from "lucide-react";
+import { Bold, Edit, Eraser, Eye, FileText, Italic, Redo2, Strikethrough, Undo2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 interface ToolbarPluginProps {
+    isPreview?: boolean;
+    onPreview?: () => void;
     onInsertTemplate?: () => void;
 }
 
-export default function ToolbarPlugin({ onInsertTemplate }: ToolbarPluginProps) {
+export default function ToolbarPlugin({ onInsertTemplate, isPreview, onPreview }: ToolbarPluginProps) {
     const [editor] = useLexicalComposerContext();
     const [isBold, setIsBold] = useState(false);
     const [isItalic, setIsItalic] = useState(false);
@@ -183,10 +185,10 @@ export default function ToolbarPlugin({ onInsertTemplate }: ToolbarPluginProps) 
                 >
                     <FileText className="w-4 h-4 mr-1" /> Contoh Template
                 </Button>
-                {/* {isPreview ? (
+                {isPreview ? (
                     <Button
                         type="button"
-                        onClick={() => setIsPreview(prev => !prev)}
+                        onClick={() => onPreview?.()}
                         variant="outline"
                         size="sm"
                         className="hover:cursor-pointer">
@@ -195,13 +197,13 @@ export default function ToolbarPlugin({ onInsertTemplate }: ToolbarPluginProps) 
                 ) : (
                     <Button
                         type="button"
-                        onClick={() => setIsPreview(prev => !prev)}
+                        onClick={() => onPreview?.()}
                         variant="outline"
                         size="sm"
                         className="hover:cursor-pointer">
                         <Eye className="w-4 h-4 mr-1" /> Preview
                     </Button>
-                )} */}
+                )}
             </div>
         </div>
     );
