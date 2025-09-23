@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/a11y/useButtonType: <explanation> */
-import { cn, nl2br } from '@/lib/utils'
+import { cn, nl2br, parseWhatsappMarkdown } from '@/lib/utils'
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
@@ -73,7 +73,11 @@ const CardTamu = ({ contact, variant }: { contact: contactProps, variant: varian
                                 <DialogTitle>Template pesan untuk {contact.name}</DialogTitle>
                             </DialogHeader>
                             <ScrollArea className="h-[250px] p-2 bg-gray-50 rounded-md">
-                                {nl2br(contact.message)}
+                                <div
+                                    className="whatsapp-text text-sm leading-relaxed"
+                                    // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+                                    dangerouslySetInnerHTML={{ __html: parseWhatsappMarkdown(contact.message) }}
+                                />
                                 <ScrollBar orientation="vertical" />
                             </ScrollArea>
                         </DialogContent>

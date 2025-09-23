@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import Papa from "papaparse";
+import DOMPurify from "dompurify";
 
 export interface Contact {
   name: string;
@@ -13,12 +14,35 @@ export function cn(...inputs: ClassValue[]) {
 
 export const nl2br = (str: string) => {
   return str.split("\\n").map((line, i) => (
-    <>
+    // biome-ignore lint/suspicious/noArrayIndexKey: using array index as key is acceptable here
+    <div key={i}>
       {line}
       <br />
-    </>
+    </div>
   ));
 }
+
+export const parseWhatsappMarkdown = (text: string): string => {
+
+  const formatted = text
+    // bold
+    .replace(/\*(.*?)\*/g, "<strong>$1</strong>")
+    // italic
+    .replace(/_(.*?)_/g, "<em>$1</em>")
+    // strikethrough
+    .replace(/~(.*?)~/g, "<s>$1</s>")
+    // link (http or https, berhenti di spasi atau newline)
+    .replace(
+      /(https?:\/\/[^\s\n]+)/g,
+      `<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">$1</a>`
+    )
+    // newline
+    .replace(/\n/g, "<br/>");
+
+
+  return DOMPurify.sanitize(formatted);
+}
+
 
 export const parseContacts = (input: string) => {
   return input
