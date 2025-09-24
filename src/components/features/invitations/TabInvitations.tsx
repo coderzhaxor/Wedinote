@@ -25,7 +25,7 @@ const TabInvitations = () => {
 
     return (
         <>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between px-4 md:px-0">
                 <div className="flex gap-x-2">
                     <Search
                         id="search-invitation"
@@ -41,8 +41,8 @@ const TabInvitations = () => {
             </div>
 
             <div className={cn(
-                "grid gap-6 mt-6",
-                viewMode === "grid" ? "grid-cols-2" : "grid-cols-1"
+                "grid mt-6",
+                viewMode === "grid" ? "gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 px-4" : "grid-cols-1 px-4 gap-4 md:gap-6"
             )}>
                 {filteredContact.map(contact => (
                     <CardTamu key={contact.id} variant={viewMode} contact={contact} />

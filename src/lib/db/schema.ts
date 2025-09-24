@@ -1,4 +1,5 @@
-import { pgTable, varchar, serial, text, timestamp, boolean, integer, unique } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { pgTable, varchar, serial, text, timestamp, boolean, integer, unique, uniqueIndex } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -60,40 +61,69 @@ export const verification = pgTable("verification", {
     .notNull(),
 });
 
-
 // --- CONTACTS ---
-export const contacts = pgTable("contacts", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id").references(() => user.id),
-  name: varchar("name", { length: 255 }).notNull(),
-  phone: varchar("phone", { length: 20 }),
-  createdAt: timestamp("created_at").defaultNow(),
-}, (table) => ({
-  uniqueContact: unique().on(table.userId, table.phone),
-}));  
+export const contacts = pgTable(
+  "contacts",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 255 }).notNull(),
+    phone: varchar("phone", { length: 20 }),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    uniqueContact: unique().on(table.userId, table.phone),
+  }),
+);
 
 // --- TEMPLATES ---
-export const templates = pgTable("templates", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id").references(() => user.id),
-  title: varchar("title", { length: 255 }),
-  content: text("content").notNull(), // pakai {{variabel}}
-  createdAt: timestamp("created_at").defaultNow(),
-})
+export const templates = pgTable(
+  "templates",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    content: text("content").notNull(), // pakai {{variabel}}
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    uniqueUser: uniqueIndex("unique_user_template").on(table.userId),
+  }),
+);
 
 // --- TEMPLATE VARIABLES ---
 export const templateVariables = pgTable("template_variables", {
   id: serial("id").primaryKey(),
-  templateId: integer("template_id").notNull().references(() => templates.id),
+  templateId: integer("template_id")
+    .notNull()
+    .references(() => templates.id, { onDelete: "cascade" }),
   key: varchar("key", { length: 100 }).notNull(),
   value: varchar("value", { length: 255 }),
-})
+});
 
 // --- INVITATIONS ---
 export const invitations = pgTable("invitations", {
   id: serial("id").primaryKey(),
-  contactId: integer("contact_id").notNull().references(() => contacts.id),
-  templateId: integer("template_id").notNull().references(() => templates.id),
-  status: boolean("status").default(false), // "belum" | "diundang"
+  contactId: integer("contact_id")
+    .notNull()
+    .references(() => contacts.id, { onDelete: "cascade" }),
+  templateId: integer("template_id")
+    .notNull()
+    .references(() => templates.id, { onDelete: "cascade" }),
+  isInvited: boolean("is_invited").default(false),
   sentAt: timestamp("sent_at"),
-})
+});
+
+// --- RELATIONS ---
+export const usersRelations = relations(user, ({ many, one }) => ({
+  invitations: many(invitations),
+  template: one(templates),
+  contacts: many(contacts),
+}));
+
+export const templatesRelations = relations(templates, ({ many }) => ({
+  variables: many(templateVariables),
+}));

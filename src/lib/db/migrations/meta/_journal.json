@@ -15,6 +15,13 @@
       "when": 1758431995727,
       "tag": "0001_silky_thena",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1758705593096,
+      "tag": "0002_tiresome_zzzax",
+      "breakpoints": true
     }
   ]
 }

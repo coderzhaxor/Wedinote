@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/a11y/useButtonType: <explanation> */
-import { cn, nl2br, parseWhatsappMarkdown } from '@/lib/utils'
+import { cn, parseWhatsappMarkdown } from '@/lib/utils'
+import parse from 'html-react-parser'
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
@@ -74,10 +75,16 @@ const CardTamu = ({ contact, variant }: { contact: contactProps, variant: varian
                             </DialogHeader>
                             <ScrollArea className="h-[250px] p-2 bg-gray-50 rounded-md">
                                 <div
-                                    className="whatsapp-text text-sm leading-relaxed"
-                                    // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-                                    dangerouslySetInnerHTML={{ __html: parseWhatsappMarkdown(contact.message) }}
-                                />
+                                    className="text-sm">
+
+                                    {contact.message.split("\n").map((line, i) => (
+                                        // biome-ignore lint/suspicious/noArrayIndexKey: using array index as key is acceptable here
+                                        <div key={i}>
+                                            {parse(parseWhatsappMarkdown(line))}
+                                            <br />
+                                        </div>
+                                    ))}
+                                </div>
                                 <ScrollBar orientation="vertical" />
                             </ScrollArea>
                         </DialogContent>

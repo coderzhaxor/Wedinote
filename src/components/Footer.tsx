@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 
 const Footer = () => {
   return (
-    <footer className="max-w-4xl mx-auto py-8 px-4 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500">
+    <footer className="max-w-4xl mx-auto py-8 px-4 flex flex-col gap-4 sm:flex-row items-center justify-between text-sm text-gray-500">
       <span>© 2025 Januantara - All Right Reserved.</span>
       <div className="flex space-x-2">
         <Link

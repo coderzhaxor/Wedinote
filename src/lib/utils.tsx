@@ -37,10 +37,15 @@ export const parseWhatsappMarkdown = (text: string): string => {
       `<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">$1</a>`
     )
     // newline
-    .replace(/\n/g, "<br/>");
+    .replace(/\n/g, "<br>")
+    // 2 br menjadi 1 br (exact)
+    .replace(/<br><br>/g, '<br>')
+    // 4 br menjadi 2 br (exact)
+    .replace(/<br><br><br><br>/g, '<br><br>')
 
-
-  return DOMPurify.sanitize(formatted);
+  return DOMPurify.sanitize(formatted, {
+    ALLOWED_TAGS: ['em', 'strong', 'a', 'br', 's'],
+  });
 }
 
 

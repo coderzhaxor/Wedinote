@@ -1,11 +1,11 @@
-import { BookOpen, BookUser, FileText } from "lucide-react";
 import TabInvitations from "@/components/features/invitations/TabInvitations";
-import { lazy, Suspense } from "react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BookOpen, BookUser, FileText } from "lucide-react";
+import { lazy } from "react";
 
 const TabContacts = lazy(() => import("@/components/features/contacts/TabContacts"));
 const TabTemplates = lazy(() => import("@/components/features/templates/TabTemplates"));
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Dashboard = () => {
 

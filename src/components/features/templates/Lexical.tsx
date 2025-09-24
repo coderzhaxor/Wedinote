@@ -65,11 +65,12 @@ export default function Lexical({ onContentChange }: LexicalProps) {
                 <ToolbarPlugin onPreview={handlePreview} isPreview={isPreview} onInsertTemplate={handleInsertTemplate} />
                 {isPreview ? (
                     <Wrapper
-                        className='min-h-[200px] w-full p-4 bg-gray-100 text-gray-800 border-none'
+                        className='min-h-[200px] w-full p-4 bg-gray-50 border-none leading-relaxed'
                     >
-                        {parse(parseWhatsappMarkdown(editorContent))}
+                        <div>
+                            {parse(parseWhatsappMarkdown(editorContent))}
+                        </div>
                     </Wrapper>
-
                 ) : (
                     <RichTextPlugin
                         contentEditable={

@@ -26,7 +26,7 @@ const LoginPage = () => {
 
   return (
     <div className="mx-auto max-w-4xl p-4 flex flex-col h-[500px] justify-center items-center">
-      <div className="p-6 mx-auto border rounded-md w-[500px] text-center">
+      <div className="p-6 mx-auto border rounded-md max-w-sm md:w-[500px] text-center">
         <h1 className="font-medium text-2xl italic mb-4">Welcome to WediNote</h1>
         <p className="mb-4 text-muted-foreground">Sign in with Google to continue</p>
         <Button
