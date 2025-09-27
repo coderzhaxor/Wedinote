@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, varchar, serial, text, timestamp, boolean, integer, unique, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, varchar, serial, text, timestamp, boolean, integer, unique, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -86,7 +86,7 @@ export const templates = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    content: text("content").notNull(), // pakai {{variabel}}
+    content: text("content"),
     createdAt: timestamp("created_at").defaultNow(),
   },
   (table) => ({
@@ -96,13 +96,17 @@ export const templates = pgTable(
 
 // --- TEMPLATE VARIABLES ---
 export const templateVariables = pgTable("template_variables", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   templateId: integer("template_id")
     .notNull()
     .references(() => templates.id, { onDelete: "cascade" }),
   key: varchar("key", { length: 100 }).notNull(),
   value: varchar("value", { length: 255 }),
-});
+},
+  (table) => ({
+    uniqueTemplateKey: unique().on(table.templateId, table.key)
+  })
+);
 
 // --- INVITATIONS ---
 export const invitations = pgTable("invitations", {

@@ -12,15 +12,16 @@ interface InputVariableProps {
     variable: VariableProps
     placeholder?: string
     disabled?: boolean
-    changeVariable: (id: string, value: string) => void
+    changeKey: (id: string, key: string) => void
+    changeValue: (id: string, value: string) => void
     handleDelete: (id: string) => void
 }
 
-const InputVariable = ({ variable, placeholder, disabled = false, changeVariable, handleDelete }: InputVariableProps) => {
+const InputVariable = ({ variable, placeholder, disabled = false, changeKey, changeValue, handleDelete }: InputVariableProps) => {
     return (
         <div key={variable.id} className="flex gap-x-2">
             <Input
-                onChange={(e) => changeVariable(variable.id, e.target.value)}
+                onChange={(e) => changeKey(variable.id, e.target.value)}
                 type="text"
                 placeholder={placeholder || "Key (nama_variable)"}
                 disabled={disabled}
@@ -28,7 +29,7 @@ const InputVariable = ({ variable, placeholder, disabled = false, changeVariable
                 className="max-w-72 disabled:ring-0"
             />
             <Input
-                onChange={(e) => changeVariable(variable.id, e.target.value)}
+                onChange={(e) => changeValue(variable.id, e.target.value)}
                 type="text"
                 placeholder={placeholder || "Value"}
                 disabled={disabled}

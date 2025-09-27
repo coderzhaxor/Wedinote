@@ -6,8 +6,8 @@ export interface TemplateProps {
 }
 
 export interface VariableProps {
-  id: number;
-  templateId: number;
+  id?: string;
+  templateId?: number;
   key: string;
   value: string;
 }

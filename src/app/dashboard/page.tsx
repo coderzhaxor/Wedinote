@@ -1,13 +1,18 @@
+import { BookOpen, BookUser, FileText } from "lucide-react";
+import { lazy } from "react";
 import TabInvitations from "@/components/features/invitations/TabInvitations";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, BookUser, FileText } from "lucide-react";
-import { lazy } from "react";
+import { session } from "../../../auth-schema";
 
 const TabContacts = lazy(() => import("@/components/features/contacts/TabContacts"));
 const TabTemplates = lazy(() => import("@/components/features/templates/TabTemplates"));
 
 const Dashboard = () => {
+
+  if (!session) {
+    window.location.href = "/login";
+  }
 
   return (
     <main className="max-w-4xl mx-auto py-4 mt-8">

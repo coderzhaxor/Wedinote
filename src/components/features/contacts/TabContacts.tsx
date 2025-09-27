@@ -7,6 +7,7 @@ import FileUpload from "@/components/ui/FileUpload";
 import Search from "@/components/ui/Search";
 import { useContacts } from "@/hooks/useContacts";
 import { parseContacts } from "@/lib/utils";
+import { session } from "../../../../auth-schema";
 
 import CardContact from "./CardContact";
 import ContactLoading from "./ContactLoading";
@@ -20,6 +21,11 @@ Dear Bestie, Mbak Siti (089234293935)
 dst..`;
 
 const TabContacts = () => {
+
+    if (!session) {
+        window.location.href = "/login";
+    }
+
     const contactAreaRef = useRef<HTMLTextAreaElement>(null);
     const { contactsQuery, addMutation, deleteMutation, updateMutation } = useContacts();
 

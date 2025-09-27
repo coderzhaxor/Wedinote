@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { templates, templateVariables } from "@/lib/db/schema";
 import type { TemplateProps, VariableProps } from "@/types/templates";
 import { getUserIdFromSession } from "./contacts";
-import { and, desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 
 export const getTemplates = async () => {
   const userId = await getUserIdFromSession();
@@ -15,16 +15,24 @@ export const getTemplates = async () => {
     .orderBy(desc(templates.createdAt));
 };
 
-export const getTemplateById = async (templateId: number) => {
+export const getTemplateId = async () => {
   const userId = await getUserIdFromSession();
-  const [template] = await db
-    .select()
+  const template = await db
+    .select({
+      templateId: templates.id
+    })
     .from(templates)
-    .where(and(eq(templates.id, templateId), eq(templates.userId, userId)));
-  return template;
-};
+    .where(eq(templates.userId, userId))
+    .limit(1)
 
-export const getTemplateVariables = async (templateId: number) => {
+  return template.at(0)?.templateId ?? null;
+}
+
+export const getTemplateVariables = async () => {
+  const templateId = await getTemplateId();
+  if (templateId === null) {
+    return [];
+  }
   return db
     .select()
     .from(templateVariables)
@@ -36,15 +44,33 @@ export const saveTemplate = async ({ content }: TemplateProps) => {
   return await db
     .insert(templates)
     .values({
-      userId: userId,
-      content: content,
+      userId,
+      content,
+    })
+    .onConflictDoUpdate({
+      target: templates.userId,
+      set: {
+        content,
+      }
     })
     .returning({ templateId: templates.id });
 };
 
 export const saveVariables = async (variables: VariableProps[]) => {
   const userId = await getUserIdFromSession();
-  const templateId = variables[0]?.templateId;
+  let templateId: number | null = await getTemplateId();
+
+  // Insert empty template first if the user doesn't have any template
+  if (templateId === null) {
+    const inserted = await db
+      .insert(templates)
+      .values({
+        userId,
+        content: "",
+      })
+      .returning({ templateId: templates.id });
+    templateId = inserted[0].templateId;
+  }
 
   // Save the variables to the database or perform any necessary actions
   return await db
@@ -59,7 +85,8 @@ export const saveVariables = async (variables: VariableProps[]) => {
     .onConflictDoUpdate({
       target: [templateVariables.templateId, templateVariables.key],
       set: {
-        value: templateVariables.value,
+        value: sql`EXCLUDED.value`,
       },
-    });
+    })
+    .returning();
 };

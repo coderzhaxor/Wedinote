@@ -28,11 +28,10 @@ export function useContacts() {
         queryFn: () => getContacts(),
     });
 
-    // Add (expects parsed ContactInput[] as variables)
     const addMutation = useMutation<
-        { inserted: Contact[]; all: Contact[] }, // TData (what server returns)
-        Error, // TError
-        ContactInput[] // TVariables (we send input contacts without id/createdAt/userId)
+        { inserted: Contact[]; all: Contact[] },
+        Error,
+        ContactInput[]
     >({
         mutationFn: (contactsToAdd) => addContacts(contactsToAdd),
         onSuccess: (data, variables) => {

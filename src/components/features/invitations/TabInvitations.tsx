@@ -1,14 +1,19 @@
 "use client"
 
 import { useState } from "react"
-import { cn } from "@/lib/utils"
 import { contacts } from "@/lib/contacts"
-import FilterButton from "./FilterButton"
+import { cn } from "@/lib/utils"
+import { session } from "../../../../auth-schema"
 import Search from "../../ui/Search"
-import ViewModeButton from "./ViewModeButton"
 import CardTamu from "./CardTamu"
+import FilterButton from "./FilterButton"
+import ViewModeButton from "./ViewModeButton"
 
 const TabInvitations = () => {
+
+    if (!session) {
+        window.location.href = "/login";
+    }
 
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
     const [query, setQuery] = useState<string>("")
@@ -30,6 +35,7 @@ const TabInvitations = () => {
                     <Search
                         id="search-invitation"
                         placeholder="Cari nama tamu undangan..."
+                        className="sm:w-64"
                         value={query}
                         onChange={e => setQuery(e.target.value)}
                     />
@@ -41,9 +47,10 @@ const TabInvitations = () => {
             </div>
 
             <div className={cn(
-                "grid mt-6",
-                viewMode === "grid" ? "gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 px-4" : "grid-cols-1 px-4 gap-4 md:gap-6"
+                "grid mt-6 px-4 sm:px-0 gap-4 md:gap-6",
+                viewMode === "grid" ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"
             )}>
+                <InvitationCardLoading />
                 {filteredContact.map(contact => (
                     <CardTamu key={contact.id} variant={viewMode} contact={contact} />
                 ))}
@@ -52,5 +59,25 @@ const TabInvitations = () => {
         </>
     )
 }
+
+export const InvitationCardLoading = () => (
+    <div className="flex flex-col border rounded-md p-6 animate-pulse">
+        <div className="flex justify-between items-start">
+            <div>
+                <div className="h-4 w-50 rounded-sm bg-gray-200 mb-3"></div>
+                <div className="h-4 w-32 rounded-sm bg-gray-200"></div>
+            </div>
+            <div className="h-6 w-22 rounded-2xl bg-gray-200"></div>
+        </div>
+        <div className="mt-7 h-12 rounded-lg border flex justify-between items-center px-4">
+            <div className="h-4 w-42 rounded-sm bg-gray-200"></div>
+            <div className="size-6 bg-gray-200 rounded-full"></div>
+        </div>
+        <div className="flex gap-4 mt-6">
+            <div className="h-8 rounded-sm flex-1 bg-gray-200"></div>
+            <div className="h-8 rounded-sm flex-1 bg-gray-200"></div>
+        </div>
+    </div>
+)
 
 export default TabInvitations

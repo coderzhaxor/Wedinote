@@ -1,0 +1,1 @@
+ALTER TABLE "template_variables" ADD CONSTRAINT "template_variables_template_id_key_unique" UNIQUE("template_id","key");
