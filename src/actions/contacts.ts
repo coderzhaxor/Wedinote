@@ -10,7 +10,7 @@ import { contacts } from "@/lib/db/schema";
 export type Contact = InferSelectModel<typeof contacts>;
 
 /** Get userId from session */
-export async function getUserIdFromSession() {
+async function getUserIdFromSession() {
   const session = await auth.api.getSession({ headers: new Headers(await headers()) });
   if (!session) throw new Error("Unauthorized");
   return session.user.id;

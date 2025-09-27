@@ -8,8 +8,11 @@ import Search from "../../ui/Search"
 import CardTamu from "./CardTamu"
 import FilterButton from "./FilterButton"
 import ViewModeButton from "./ViewModeButton"
+import { useInvitations } from "@/hooks/useInvitations"
 
 const TabInvitations = () => {
+
+    const { invitationQuery } = useInvitations()
 
     if (!session) {
         window.location.href = "/login";
@@ -50,10 +53,13 @@ const TabInvitations = () => {
                 "grid mt-6 px-4 sm:px-0 gap-4 md:gap-6",
                 viewMode === "grid" ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"
             )}>
-                <InvitationCardLoading />
                 {filteredContact.map(contact => (
                     <CardTamu key={contact.id} variant={viewMode} contact={contact} />
                 ))}
+            </div>
+
+            <div>
+                {JSON.stringify(invitationQuery.data)}
             </div>
 
         </>

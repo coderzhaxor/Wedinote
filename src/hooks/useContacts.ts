@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { addContacts, deleteAllContacts, deleteContact, getContacts, updateContact } from "@/actions/contacts";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { addContacts, deleteAllContacts, deleteContact, getContacts, updateContact } from "@/actions/Contacts";
 
 /**
  * Minimal Contact type used on client

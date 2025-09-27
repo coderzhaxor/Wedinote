@@ -1,10 +1,17 @@
 "use server"
 
+import { desc, eq, sql } from "drizzle-orm";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { templates, templateVariables } from "@/lib/db/schema";
 import type { TemplateProps, VariableProps } from "@/types/templates";
-import { getUserIdFromSession } from "./contacts";
-import { desc, eq, sql } from "drizzle-orm";
+
+async function getUserIdFromSession() {
+  const session = await auth.api.getSession({ headers: new Headers(await headers()) });
+  if (!session) throw new Error("Unauthorized");
+  return session.user.id;
+}
 
 export const getTemplates = async () => {
   const userId = await getUserIdFromSession();
