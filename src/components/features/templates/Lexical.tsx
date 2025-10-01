@@ -6,13 +6,13 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { $getRoot } from 'lexical';
-import type { EditorState } from 'lexical';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import parse from 'html-react-parser';
 
 import ToolbarPlugin from './ToolbarPlugin';
 import TemplateInsertPlugin from './TemplateInsertPlugin';
-import { parseWhatsappMarkdown } from '@/lib/utils';
+import { parseToDatabase, parseWhatsappMarkdown } from '@/lib/utils';
+import { useTemplates } from '@/hooks/useTemplates';
 
 function onError(error: Error) {
     console.error(error);
@@ -44,17 +44,6 @@ export default function Lexical({ onContentChange }: LexicalProps) {
         onError,
     };
 
-    // Function to handle editor changes
-    const onChange = (editorState: EditorState) => {
-        editorState.read(() => {
-            const root = $getRoot();
-            const textContent = root.getTextContent();
-            setEditorContent(textContent);
-            onContentChange?.(textContent);
-            console.log('Editor content:', textContent);
-        });
-    };
-
     const Wrapper = ({ children, className }: { children: React.ReactNode, className?: string }) => <div className={className} >{children}</div>;
 
     return (
@@ -65,11 +54,14 @@ export default function Lexical({ onContentChange }: LexicalProps) {
                 <ToolbarPlugin onPreview={handlePreview} isPreview={isPreview} onInsertTemplate={handleInsertTemplate} />
                 {isPreview ? (
                     <Wrapper
-                        className='min-h-[200px] w-full p-4 bg-gray-50 border-none leading-relaxed'
+                        className='min-h-[200px] w-full p-4 bg-gray-50 border-none leading-relaxed select-all'
                     >
-                        <div>
-                            {parse(parseWhatsappMarkdown(editorContent))}
-                        </div>
+                        {editorContent.split("\n").map((line, i) => (
+                            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                            <div key={i}>
+                                {parse(parseWhatsappMarkdown(line))}
+                            </div>
+                        ))}
                     </Wrapper>
                 ) : (
                     <RichTextPlugin
@@ -82,7 +74,17 @@ export default function Lexical({ onContentChange }: LexicalProps) {
                     />
                 )}
 
-                <OnChangePlugin onChange={onChange} />
+                <OnChangePlugin
+                    onChange={(editorState) => {
+                        editorState.read(() => {
+                            const root = $getRoot();
+                            const textContent = root.getTextContent();
+                            console.log(parseToDatabase(textContent))
+                            setEditorContent(parseWhatsappMarkdown(textContent));
+                            onContentChange?.(parseWhatsappMarkdown(textContent));
+                        });
+                    }}
+                />
                 <TemplateInsertPlugin
                     shouldInsert={shouldInsertTemplate}
                     onInserted={handleTemplateInserted}

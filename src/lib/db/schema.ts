@@ -71,6 +71,7 @@ export const contacts = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     name: varchar("name", { length: 255 }).notNull(),
     phone: varchar("phone", { length: 20 }),
+    isInvited: boolean("isInvited").default(false).notNull(),
     createdAt: timestamp("created_at").defaultNow(),
   },
   (table) => ({
@@ -108,25 +109,8 @@ export const templateVariables = pgTable("template_variables", {
   })
 );
 
-// --- INVITATIONS ---
-export const invitations = pgTable("invitations", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  contactId: integer("contact_id")
-    .notNull()
-    .references(() => contacts.id, { onDelete: "cascade" }),
-  templateId: integer("template_id")
-    .notNull()
-    .references(() => templates.id, { onDelete: "cascade" }),
-  isInvited: boolean("is_invited").default(false),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
 // --- RELATIONS ---
 export const usersRelations = relations(user, ({ many, one }) => ({
-  invitations: many(invitations),
   template: one(templates),
   contacts: many(contacts),
 }));

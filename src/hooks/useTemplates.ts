@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { getTemplateVariables, saveTemplate, saveVariables } from "@/actions/Templates";
+import { getTemplate, getTemplateVariables, saveTemplate, saveVariables } from "@/actions/Templates";
 import type { TemplateProps, VariableProps } from "@/types/templates";
 
 export function useTemplates() {
@@ -17,6 +17,10 @@ export function useTemplates() {
     },
   });
 
+  const templateQuery = useQuery({
+    queryKey: ["template"],
+    queryFn: async () => await getTemplate()
+  })
 
   const addTemplateMutation = useMutation<{ templateId: number }[], unknown, TemplateProps>({
     mutationFn: async (template: TemplateProps) => saveTemplate(template),
@@ -26,13 +30,6 @@ export function useTemplates() {
     },
     onError: (err) => toast.error(`Error: ${err}`)
   })
-
-  // const saveTemplateVariables = useMutation<VariableProps[], unknown, VariableProps[]>({
-  //   mutationFn: async (variables: VariableProps[]) => saveVariables(variables),
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["templates"] });
-  //   },
-  // });
 
   const addVariableMutation = useMutation({
     mutationFn: async (variable: VariableProps[]) => saveVariables(variable),
@@ -45,6 +42,7 @@ export function useTemplates() {
 
   return {
     variablesQuery,
+    templateQuery,
     addTemplateMutation,
     addVariableMutation
   };

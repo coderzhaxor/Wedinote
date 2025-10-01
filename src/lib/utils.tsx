@@ -22,31 +22,39 @@ export const nl2br = (str: string) => {
   ));
 }
 
+export const parseToDatabase = (text: string) => parseWhatsappMarkdown(text.split(/\n{4,}/g).join("<br><br>").split(/\n{2,}/g).join("<br>"));
+
 export const parseWhatsappMarkdown = (text: string): string => {
+  const variables: string[] = [];
 
-  const formatted = text
-    // bold
-    .replace(/\*(.*?)\*/g, "<strong>$1</strong>")
-    // italic
-    .replace(/_(.*?)_/g, "<em>$1</em>")
-    // strikethrough
-    .replace(/~(.*?)~/g, "<s>$1</s>")
-    // link (http or https, berhenti di spasi atau newline)
-    .replace(
-      /(https?:\/\/[^\s\n]+)/g,
-      `<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">$1</a>`
-    )
-    // newline
-    .replace(/\n/g, "<br>")
-    // 2 br menjadi 1 br (exact)
-    .replace(/<br><br>/g, '<br>')
-    // 4 br menjadi 2 br (exact)
-    .replace(/<br><br><br><br>/g, '<br><br>')
-
-  return DOMPurify.sanitize(formatted, {
-    ALLOWED_TAGS: ['em', 'strong', 'a', 'br', 's'],
+  // step 1: amankan {{...}} ke placeholder
+  const protectedText = text.replace(/\{\{[\w_]+\}\}/g, (match) => {
+    const index = variables.length;
+    variables.push(match); // simpan asli
+    return `%%VAR-${index}%%`; // placeholder unik
   });
+
+  let formatted = protectedText
+    .replace(/\n{4,}/g, "<br><br>")
+    .replace(/\n{2,}/g, "<br>")
+    // .replace(/<br><br>/g, "<br>")
+    // .replace(/<br><br><br><br>/g, "<br><br>")
+    .replace(/\*([^*]+)\*/g, "<strong>$1</strong>")
+    .replace(/_([^_]+)_/g, "<em>$1</em>")
+    .replace(/~([^~]+)~/g, "<s>$1</s>");
+
+  formatted = formatted.replace(/%%VAR-(\d+)%%/g, (_, idx) => variables[idx]);
+
+  return purify(formatted)
 }
+
+
+
+export const purify = (str: string) => (
+  DOMPurify.sanitize(str, {
+    ALLOWED_TAGS: ['em', 'strong', 'a', 'br', 's'],
+  })
+)
 
 
 export const parseContacts = (input: string) => {

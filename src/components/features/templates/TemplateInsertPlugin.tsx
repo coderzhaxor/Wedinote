@@ -10,7 +10,35 @@ interface TemplateInsertPluginProps {
 export default function TemplateInsertPlugin({ shouldInsert, onInserted }: TemplateInsertPluginProps) {
     const [editor] = useLexicalComposerContext();
 
-    const templateText = `Kepada YTH.\nBapak/Ibu/Saudara/i\n*{{nama_tamu}}*\n_______\n\n*Assalamu'alaikum Warahmatullahi Wabarakaatuh*\n\nMaha Suci Allah SWT dengan segala Kebesaran-Nya yang telah menciptakan makhluk-Nya berpasang-pasangan, melalui pesan ini kami ingin menyampaikan kabar bahagia atas pernikahan kami:\n\n*{{nama_cpw}}*\n*&*\n*{{nama_cpp}}*\n\nYang InsyaAllah akan diselenggarakan pada:\n\n*Hari, Tanggal:*\n{{tgl}}\n*Intimate Wedding:*\n{{waktu}}\n*Tempat:*\n{{tempat}}\n\nLink Undangan:\n{{link_undangan}}\n\nDo'a restu menjadi keberkahan untuk pernikahan kami menjadi keluarga yang sakinnah mawadah warrahmah.\n\nWassalamu'alaikum Warahmatullahi Wabarakaatuh\n\nLisa & Ferry`;
+    const templateText = `Kepada YTH.
+Bapak/Ibu/Saudara/i
+*{{nama_tamu}}*
+
+*Assalamu'alaikum Warahmatullahi Wabarakaatuh*
+
+Maha Suci Allah SWT dengan segala Kebesaran-Nya yang telah menciptakan makhluk-Nya berpasang-pasangan, melalui pesan ini kami ingin menyampaikan kabar bahagia atas pernikahan kami:
+
+*{{nama_cpw}}*
+*&*
+*{{nama_cpp}}*
+
+Yang InsyaAllah akan diselenggarakan pada:
+
+*Hari, Tanggal:*
+{{tgl}}
+*Intimate Wedding:*
+{{waktu}}
+*Tempat:*
+{{tempat}}
+
+Link Undangan:
+{{link_undangan}}
+
+Do'a restu menjadi keberkahan untuk pernikahan kami menjadi keluarga yang sakinnah mawadah warrahmah.
+
+Wassalamu'alaikum Warahmatullahi Wabarakaatuh
+
+{{nama_singkat_cpw}} & {{nama_singkat_cpp}}`;
 
     useEffect(() => {
         if (shouldInsert) {

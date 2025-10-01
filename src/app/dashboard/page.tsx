@@ -1,8 +1,8 @@
-import { BookOpen, BookUser, FileText } from "lucide-react";
-import { lazy } from "react";
 import TabInvitations from "@/components/features/invitations/TabInvitations";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BookOpen, BookUser, FileText } from "lucide-react";
+import { lazy } from "react";
 import { session } from "../../../auth-schema";
 
 const TabContacts = lazy(() => import("@/components/features/contacts/TabContacts"));

@@ -1,24 +1,40 @@
 /** biome-ignore-all lint/a11y/useButtonType: <explanation> */
-import { cn, parseWhatsappMarkdown } from '@/lib/utils'
+
 import parse from 'html-react-parser'
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
+import { EyeIcon } from 'lucide-react'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
-import { ShareButton } from './ShareButton'
+import { cn } from '@/lib/utils'
+import type { Contact, TemplateVariable } from '@/types/invitation'
 import CopyButton from './CopyButton'
-import { EyeIcon } from 'lucide-react'
+import { ShareButton } from './ShareButton'
+import mustache from "mustache"
 
-type contactProps = {
-    id: string
-    name: string
-    phone?: string
-    status: boolean
-    message: string
-}
 
 type variantProps = "grid" | "list"
 
-const CardTamu = ({ contact, variant }: { contact: contactProps, variant: variantProps }) => {
+const CardTamu = (
+    {
+        contact,
+        variant,
+        message,
+        variables
+    }
+        :
+        {
+            contact: Contact,
+            variant: variantProps,
+            message: string
+            variables: TemplateVariable[]
+        }
+) => {
+
+    const variablesObject = Object.fromEntries(variables.map(v => [v.key, v.value]))
+    variablesObject.nama_tamu = contact.name
+    let parsedMessage = mustache.render(message, variablesObject)
+    parsedMessage = parsedMessage.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+
     return (
         <Card className="gap-4">
             <CardHeader>
@@ -42,18 +58,18 @@ const CardTamu = ({ contact, variant }: { contact: contactProps, variant: varian
                             // disabled={isPending}
                             className={cn(
                                 "contact-status text-sm font-medium px-2 py-1 transition",
-                                contact.status ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800",
+                                contact.isInvited ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800",
                                 variant === "list" ? "rounded-md py-2" : "rounded-full",
                                 // isPending && "opacity-60 cursor-not-allowed"
                             )}
                         >
                             {/* isPending ? "..." :  */}
-                            {contact.status ? '✓ Diundang' : '⏳ Belum'}
+                            {contact.isInvited ? '✓ Diundang' : '⏳ Belum'}
                         </button>
                         {variant === "list" && (
                             <>
-                                <CopyButton variant="list" message={contact.message} />
-                                <ShareButton variant="icon" phone={contact.phone ?? ""} message={contact.message} />
+                                <CopyButton variant="list" message={message} />
+                                <ShareButton variant="icon" phone={contact.phone ?? ""} message={message} />
                             </>
                         )}
                     </div>
@@ -76,13 +92,8 @@ const CardTamu = ({ contact, variant }: { contact: contactProps, variant: varian
                             <ScrollArea className="h-[250px] p-2 bg-gray-50 rounded-md">
                                 <div
                                     className="text-sm">
-
-                                    {contact.message.split("\n").map((line, i) => (
-                                        // biome-ignore lint/suspicious/noArrayIndexKey: using array index as key is acceptable here
-                                        <div key={i}>
-                                            {parse(parseWhatsappMarkdown(line))}
-                                            <br />
-                                        </div>
+                                    {parsedMessage.split("\n").map((line) => (
+                                        <div key={contact.id}>{parse(line)}</div>
                                     ))}
                                 </div>
                                 <ScrollBar orientation="vertical" />
@@ -93,10 +104,8 @@ const CardTamu = ({ contact, variant }: { contact: contactProps, variant: varian
             ) : ''}
             {variant === "grid" ? (
                 <CardFooter className="flex gap-x-2 *:flex-1">
-                    <>
-                        <CopyButton message={contact.message} variant={variant} />
-                        <ShareButton phone={contact.phone ?? ''} message={contact.message} />
-                    </>
+                    <CopyButton message={message} variant={variant} />
+                    <ShareButton phone={contact.phone ?? ''} message={message} />
                 </CardFooter>
             ) : ''}
         </Card>

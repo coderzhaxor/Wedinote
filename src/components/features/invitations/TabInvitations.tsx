@@ -1,18 +1,20 @@
 "use client"
 
 import { useState } from "react"
-import { contacts } from "@/lib/contacts"
+import { useInvitations } from "@/hooks/useInvitations"
 import { cn } from "@/lib/utils"
 import { session } from "../../../../auth-schema"
 import Search from "../../ui/Search"
 import CardTamu from "./CardTamu"
 import FilterButton from "./FilterButton"
 import ViewModeButton from "./ViewModeButton"
-import { useInvitations } from "@/hooks/useInvitations"
 
 const TabInvitations = () => {
 
     const { invitationQuery } = useInvitations()
+    const template = invitationQuery.data?.templates
+    const contacts = invitationQuery.data?.contacts
+    // const data = async () => await getInvitations()
 
     if (!session) {
         window.location.href = "/login";
@@ -22,14 +24,18 @@ const TabInvitations = () => {
     const [query, setQuery] = useState<string>("")
     const [filter, setFilter] = useState("all")
 
-    const filteredContact = contacts.filter(contact => {
+    const filteredContact = contacts?.filter(contact => {
         let matchFilter = true
         const q = query.trim()
         const matchSearch = contact.name.toLowerCase().includes(q.toLowerCase())
-        if (filter === "diundang") matchFilter = contact.status === true
-        if (filter === "belum") matchFilter = contact.status === false
+        if (filter === "diundang") matchFilter = contact.isInvited === true
+        if (filter === "belum") matchFilter = contact.isInvited === false
         return matchFilter && matchSearch
     })
+
+    const data = invitationQuery.data
+    console.log(data)
+
 
     return (
         <>
@@ -53,13 +59,21 @@ const TabInvitations = () => {
                 "grid mt-6 px-4 sm:px-0 gap-4 md:gap-6",
                 viewMode === "grid" ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"
             )}>
-                {filteredContact.map(contact => (
-                    <CardTamu key={contact.id} variant={viewMode} contact={contact} />
+                {invitationQuery.isPending && [1, 2, 3, 4, 5, 6].map((key) => (
+                    <InvitationCardLoading key={key} />
                 ))}
-            </div>
-
-            <div>
-                {JSON.stringify(invitationQuery.data)}
+                {filteredContact?.map(contact => (
+                    <CardTamu
+                        key={contact.id}
+                        variant={viewMode}
+                        contact={{
+                            ...contact,
+                            phone: contact.phone ?? "08xxxxxxx"
+                        }}
+                        message={template?.content ?? ""}
+                        variables={template?.variables ?? ""}
+                    />
+                ))}
             </div>
 
         </>

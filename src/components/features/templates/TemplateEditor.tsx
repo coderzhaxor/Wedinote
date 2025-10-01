@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Lexical from './Lexical';
 import { useTemplates } from '@/hooks/useTemplates';
+import Lexical from './Lexical';
 
 export default function TemplateEditor() {
     const [currentContent, setCurrentContent] = useState('');
@@ -10,7 +10,6 @@ export default function TemplateEditor() {
 
     const saveTemplate = () => {
         addTemplateMutation.mutate({ content: currentContent });
-        setCurrentContent('');
     }
 
     return (

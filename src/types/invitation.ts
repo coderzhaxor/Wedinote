@@ -17,6 +17,7 @@
 */
 
 export interface TemplateVariable {
+    map(arg0: (v: any) => any[]): Iterable<readonly [PropertyKey, any]>
     key: string
     value: string
 }

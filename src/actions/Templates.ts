@@ -13,13 +13,14 @@ async function getUserIdFromSession() {
   return session.user.id;
 }
 
-export const getTemplates = async () => {
+export const getTemplate = async () => {
   const userId = await getUserIdFromSession();
   return db
     .select()
     .from(templates)
     .where(eq(templates.userId, userId))
-    .orderBy(desc(templates.createdAt));
+    .orderBy(desc(templates.createdAt))
+    .limit(1);
 };
 
 export const getTemplateId = async () => {
