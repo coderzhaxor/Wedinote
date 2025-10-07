@@ -5,8 +5,6 @@
         "**/.hg": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
-        "tsconfig.json": true,
-        "next-env.d.ts": true,
         "postcss.config.mjs": true,
         "drizzle.config.ts": true,
         "components.json": true,
@@ -16,8 +14,6 @@
         "bun.lock": true
     },
     "hide-files.files": [
-        "tsconfig.json",
-        "next-env.d.ts",
         "postcss.config.mjs",
         "drizzle.config.ts",
         "components.json",

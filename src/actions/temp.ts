@@ -1,7 +1,7 @@
 "use server";
 
 import type { InferSelectModel } from "drizzle-orm";
-import { and, eq, desc } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
