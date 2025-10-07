@@ -10,6 +10,7 @@ import type { Contact, TemplateVariable } from '@/types/invitation'
 import CopyButton from './CopyButton'
 import { ShareButton } from './ShareButton'
 import mustache from "mustache"
+import { useInvitations } from '@/hooks/useInvitations'
 
 
 type variantProps = "grid" | "list"
@@ -29,6 +30,8 @@ const CardTamu = (
             variables: TemplateVariable[]
         }
 ) => {
+
+    const { updateInviteMutation } = useInvitations()
 
     const variablesObject = Object.fromEntries(variables.map(v => [v.key, v.value]))
     variablesObject.nama_tamu = contact.name
@@ -54,21 +57,23 @@ const CardTamu = (
                     </div>
                     <div className="flex items-center gap-2">
                         <button
-                            // onClick={toggleStatus}
-                            // disabled={isPending}
+                            onClick={() => updateInviteMutation.mutate({ id: Number(contact.id) })}
+                            disabled={updateInviteMutation.isPending}
                             className={cn(
-                                "contact-status text-sm font-medium px-2 py-1 transition",
+                                "contact-status text-sm font-medium px-2 py-1 transition hover:cursor-pointer",
                                 contact.isInvited ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800",
                                 variant === "list" ? "rounded-md py-2" : "rounded-full",
-                                // isPending && "opacity-60 cursor-not-allowed"
+                                updateInviteMutation.isPending && "opacity-60 cursor-not-allowed"
                             )}
                         >
-                            {/* isPending ? "..." :  */}
-                            {contact.isInvited ? '✓ Diundang' : '⏳ Belum'}
+                            {updateInviteMutation.isPending ? "..." : contact.isInvited ? '✓ Diundang' : '⏳ Belum'}
                         </button>
                         {variant === "list" && (
                             <>
-                                <CopyButton variant="list" message={message} />
+                                <CopyButton
+                                    id={Number(contact.id)}
+                                    variant="list" message={message}
+                                />
                                 <ShareButton variant="icon" phone={contact.phone ?? ""} message={message} />
                             </>
                         )}
@@ -104,7 +109,7 @@ const CardTamu = (
             ) : ''}
             {variant === "grid" ? (
                 <CardFooter className="flex gap-x-2 *:flex-1">
-                    <CopyButton message={message} variant={variant} />
+                    <CopyButton id={Number(contact.id)} message={message} variant={variant} />
                     <ShareButton phone={contact.phone ?? ''} message={message} />
                 </CardFooter>
             ) : ''}

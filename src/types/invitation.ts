@@ -30,7 +30,7 @@ export interface TemplateData {
 export interface Contact {
     id: number | string
     name: string
-    phone: string
+    phone: string | null
     isInvited?: boolean
 }
 

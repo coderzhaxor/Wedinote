@@ -11,10 +11,9 @@ import ViewModeButton from "./ViewModeButton"
 
 const TabInvitations = () => {
 
-    const { invitationQuery } = useInvitations()
-    const template = invitationQuery.data?.templates
-    const contacts = invitationQuery.data?.contacts
-    // const data = async () => await getInvitations()
+    const { invitationQuery, isPending } = useInvitations()
+    const template = invitationQuery?.templates
+    const contacts = invitationQuery?.contacts
 
     if (!session) {
         window.location.href = "/login";
@@ -32,9 +31,6 @@ const TabInvitations = () => {
         if (filter === "belum") matchFilter = contact.isInvited === false
         return matchFilter && matchSearch
     })
-
-    const data = invitationQuery.data
-    console.log(data)
 
 
     return (
@@ -59,7 +55,7 @@ const TabInvitations = () => {
                 "grid mt-6 px-4 sm:px-0 gap-4 md:gap-6",
                 viewMode === "grid" ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"
             )}>
-                {invitationQuery.isPending && [1, 2, 3, 4, 5, 6].map((key) => (
+                {isPending && [1, 2, 3, 4, 5, 6].map((key) => (
                     <InvitationCardLoading key={key} />
                 ))}
                 {filteredContact?.map(contact => (

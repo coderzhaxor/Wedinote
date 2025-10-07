@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { signIn } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -13,11 +14,21 @@ const LoginPage = () => {
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
+
+      // Cek koneksi sebelum mencoba sign in
+      if (!navigator.onLine) {
+        throw new Error("NO_INTERNET");
+      }
+
       await signIn.social({
         provider: "google",
         callbackURL: "/dashboard",
       });
-    } catch (error) {
+
+    } catch (error: any) {
+      if (error.message === "NO_INTERNET") {
+        return toast.error("Tidak ada koneksi internet. Periksa sambunganmu.");
+      }
       console.error("Login error:", error);
     } finally {
       setIsLoading(false);

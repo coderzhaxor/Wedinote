@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db"
 import { templates, templateVariables, contacts } from "@/lib/db/schema"
-import { desc, eq } from "drizzle-orm"
+import { and, desc, eq, not } from "drizzle-orm"
 import { headers } from "next/headers";
 
 async function getUserIdFromSession() {
@@ -11,7 +11,6 @@ async function getUserIdFromSession() {
     if (!session) throw new Error("Unauthorized");
     return session.user.id;
 }
-
 
 export async function getInvitations() {
     const userId = await getUserIdFromSession()
@@ -55,4 +54,28 @@ export async function getInvitations() {
             isInvited: c.isInvited
         }))
     }
+}
+
+export async function updateInviteOnCopy(contactId: number) {
+    const userId = await getUserIdFromSession()
+
+    return await db
+        .update(contacts)
+        .set({
+            isInvited: true
+        })
+        .where(and(eq(contacts.userId, userId), eq(contacts.id, contactId)))
+        .returning()
+}
+
+export async function updateInvitationContact(contactId: number) {
+    const userId = await getUserIdFromSession()
+
+    return await db
+        .update(contacts)
+        .set({
+            isInvited: not(contacts.isInvited)
+        })
+        .where(and(eq(contacts.userId, userId), eq(contacts.id, contactId)))
+        .returning()
 }

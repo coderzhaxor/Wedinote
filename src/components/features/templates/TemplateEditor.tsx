@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTemplates } from '@/hooks/useTemplates';
+import { parseWhatsappMarkdown } from '@/lib/utils';
 import Lexical from './Lexical';
 
 export default function TemplateEditor() {
@@ -9,7 +10,7 @@ export default function TemplateEditor() {
     const { addTemplateMutation } = useTemplates();
 
     const saveTemplate = () => {
-        addTemplateMutation.mutate({ content: currentContent });
+        addTemplateMutation.mutate({ content: parseWhatsappMarkdown(currentContent) });
     }
 
     return (
@@ -20,9 +21,13 @@ export default function TemplateEditor() {
                 </CardHeader>
                 <CardContent>
                     <Lexical onContentChange={setCurrentContent} />
-                    <p className="text-xs text-muted-foreground italic mt-2">Gunakan {"{{nama_variabel}}"} untuk memasukkan variabel ke dalam template.</p>
+                    <p className="text-xs text-muted-foreground italic mt-2">
+                        Gunakan {"{{nama_variabel}}"} untuk memasukkan variabel ke dalam template.
+                    </p>
                     <div className="flex gap-2 mt-6">
-                        <Button onClick={saveTemplate}>Save Template</Button>
+                        <Button onClick={saveTemplate} disabled={addTemplateMutation.isPending}>
+                            {addTemplateMutation.isPending ? "Menyimpan..." : "Save Template"}
+                        </Button>
                     </div>
                 </CardContent>
             </Card>

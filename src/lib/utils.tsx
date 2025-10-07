@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import DOMPurify from "isomorphic-dompurify";
 import Papa from "papaparse";
 import { twMerge } from "tailwind-merge";
+import he from "he"
 
 export interface Contact {
   name: string;
@@ -37,8 +38,6 @@ export const parseWhatsappMarkdown = (text: string): string => {
   let formatted = protectedText
     .replace(/\n{4,}/g, "<br><br>")
     .replace(/\n{2,}/g, "<br>")
-    // .replace(/<br><br>/g, "<br>")
-    // .replace(/<br><br><br><br>/g, "<br><br>")
     .replace(/\*([^*]+)\*/g, "<strong>$1</strong>")
     .replace(/_([^_]+)_/g, "<em>$1</em>")
     .replace(/~([^~]+)~/g, "<s>$1</s>");
@@ -46,6 +45,17 @@ export const parseWhatsappMarkdown = (text: string): string => {
   formatted = formatted.replace(/%%VAR-(\d+)%%/g, (_, idx) => variables[idx]);
 
   return purify(formatted)
+}
+
+export const unParse = (text: string) => {
+  const decodedText = he.decode(text)
+
+  return decodedText
+    .replace(/<br\s*\/?>/gi, "\n")               // ganti <br> dengan newline
+    .replace(/<strong>(.*?)<\/strong>/gi, "*$1*") // ubah <strong> menjadi *...*
+    .replace(/<em>(.*?)<\/em>/gi, "_$1_")         // ubah <em> menjadi _..._
+    .replace(/<s>(.*?)<\/s>/gi, "~$1~")           // ubah <s> menjadi ~...~
+    .replace(/<\/?[^>]+(>|$)/g, "");
 }
 
 

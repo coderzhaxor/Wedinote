@@ -12,24 +12,27 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useCopyToClipboard } from 'react-use';
+import { useInvitations } from "@/hooks/useInvitations"
 
 interface CopyButtonProps {
+    id: number
     message: string
     variant: "grid" | "list"
 }
 
-export function CopyButton({ message, variant = "grid" }: CopyButtonProps) {
-    const [, copy] = useCopyToClipboard()
+export function CopyButton({ id, message, variant = "grid" }: CopyButtonProps) {
+    const [_, copy] = useCopyToClipboard()
     const [copied, setCopied] = useState(false)
+    const { updateOnCopy } = useInvitations()
 
     const handleCopy = async () => {
-
         try {
             const formattedMessage = message.replace(/\\n/g, "\n")
 
             await copy(formattedMessage)
             setCopied(true)
             setTimeout(() => setCopied(false), 1500)
+            updateOnCopy.mutate({ id })
         } catch (err) {
             console.error("Failed to copy text: ", err)
         }
