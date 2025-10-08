@@ -17,10 +17,12 @@ import { useInvitations } from "@/hooks/useInvitations"
 interface CopyButtonProps {
     id: number
     message: string
+    className?: string
+    buttonVariant?: "default" | "destructive" | "ghost" | "link" | "outline"
     variant: "grid" | "list"
 }
 
-export function CopyButton({ id, message, variant = "grid" }: CopyButtonProps) {
+export function CopyButton({ id, message, className, variant = "grid", buttonVariant = "outline" }: CopyButtonProps) {
     const [_, copy] = useCopyToClipboard()
     const [copied, setCopied] = useState(false)
     const { updateOnCopy } = useInvitations()
@@ -43,9 +45,9 @@ export function CopyButton({ id, message, variant = "grid" }: CopyButtonProps) {
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Button
-                        variant="outline"
+                        variant={buttonVariant}
                         size="icon"
-                        className="relative disabled:opacity-100 hover:cursor-pointer"
+                        className={cn("relative disabled:opacity-100 hover:cursor-pointer", className)}
                         onClick={handleCopy}
                         aria-label={copied ? "Copied" : "Copy to clipboard"}
                         disabled={copied}

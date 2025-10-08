@@ -5,7 +5,7 @@ import { EyeIcon } from 'lucide-react'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
-import { cn } from '@/lib/utils'
+import { cn, unParse } from '@/lib/utils'
 import type { Contact, TemplateVariable } from '@/types/invitation'
 import CopyButton from './CopyButton'
 import { ShareButton } from './ShareButton'
@@ -27,7 +27,10 @@ const CardTamu = (
             contact: Contact,
             variant: variantProps,
             message: string
-            variables: TemplateVariable[]
+            variables: {
+                key: string,
+                value: string | null
+            }[]
         }
 ) => {
 
@@ -96,13 +99,20 @@ const CardTamu = (
                             </DialogHeader>
                             <ScrollArea className="h-[250px] p-2 bg-gray-50 rounded-md">
                                 <div
-                                    className="text-sm">
+                                    className="text-sm select-all">
                                     {parsedMessage.split("\n").map((line) => (
                                         <div key={contact.id}>{parse(line)}</div>
                                     ))}
                                 </div>
                                 <ScrollBar orientation="vertical" />
                             </ScrollArea>
+                            <CopyButton
+                                id={Number(contact.id)}
+                                variant="grid"
+                                buttonVariant='default'
+                                className='w-full py-5 rounded-sm'
+                                message={unParse(parsedMessage)}
+                            />
                         </DialogContent>
                     </Dialog>
                 </CardContent>

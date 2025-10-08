@@ -67,7 +67,7 @@ const TabInvitations = () => {
                             phone: contact.phone ?? "08xxxxxxx"
                         }}
                         message={template?.content ?? ""}
-                        variables={template?.variables ?? ""}
+                        variables={Array.isArray(template?.variables) ? template.variables : [{ key: "", value: null }]}
                     />
                 ))}
             </div>
