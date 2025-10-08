@@ -120,7 +120,7 @@ const CardTamu = (
             {variant === "grid" ? (
                 <CardFooter className="flex gap-x-2 *:flex-1">
                     <CopyButton id={Number(contact.id)} message={message} variant={variant} />
-                    <ShareButton phone={contact.phone ?? ''} message={message} />
+                    <ShareButton phone={contact.phone ?? ''} message={unParse(parsedMessage)} />
                 </CardFooter>
             ) : ''}
         </Card>

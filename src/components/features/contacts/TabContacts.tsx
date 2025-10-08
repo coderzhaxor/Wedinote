@@ -12,6 +12,7 @@ import { session } from "../../../../auth-schema";
 import CardContact from "./CardContact";
 import ContactLoading from "./ContactLoading";
 import DeleteAllContacts from "./DeleteAllContacts";
+import TableInfo from '../templates/TableInfo';
 
 
 const CONTACT_PLACEHOLDER = `Pisahkan kontak dengan enter, contoh:
@@ -83,6 +84,7 @@ const TabContacts = () => {
                     </Button>
 
                     <FileUpload textareaRef={contactAreaRef} disabled={addMutation.isPending} />
+                    <TableInfo />
                 </div>
             </div>
 
