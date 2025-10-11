@@ -73,6 +73,10 @@ export const contacts = pgTable(
     phone: varchar("phone", { length: 20 }),
     isInvited: boolean("isInvited").default(false).notNull(),
     createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
   },
   (table) => ({
     uniqueContact: unique().on(table.userId, table.phone),

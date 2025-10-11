@@ -1,0 +1,1 @@
+ALTER TABLE "contacts" RENAME COLUMN "updatedAt" TO "updated_at";

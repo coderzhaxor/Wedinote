@@ -1,10 +1,10 @@
 "use server"
 
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db"
-import { templates, templateVariables, contacts } from "@/lib/db/schema"
 import { and, desc, eq, not } from "drizzle-orm"
 import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db"
+import { contacts, templates, templateVariables } from "@/lib/db/schema"
 
 async function getUserIdFromSession() {
     const session = await auth.api.getSession({ headers: new Headers(await headers()) });
@@ -37,7 +37,7 @@ export async function getInvitations() {
         .select()
         .from(contacts)
         .where(eq(contacts.userId, userId))
-        .orderBy(desc(contacts.createdAt))
+        .orderBy(desc(contacts.updatedAt))
 
     return {
         templates: {
@@ -74,7 +74,7 @@ export async function updateInvitationContact(contactId: number) {
     return await db
         .update(contacts)
         .set({
-            isInvited: not(contacts.isInvited)
+            isInvited: not(contacts.isInvited),
         })
         .where(and(eq(contacts.userId, userId), eq(contacts.id, contactId)))
         .returning()

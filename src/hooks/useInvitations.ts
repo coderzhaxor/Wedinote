@@ -5,7 +5,7 @@ import { getInvitations, updateInvitationContact, updateInviteOnCopy } from "@/a
 export function useInvitations() {
     const queryClient = useQueryClient()
 
-    const { data: invitationQuery, refetch: refetchInvitations, isPending } = useQuery({
+    const { data: invitationQuery, refetch: refetchInvitations, isPending, isSuccess } = useQuery({
         queryKey: ["invitations"],
         queryFn: () => getInvitations()
     })
@@ -27,6 +27,6 @@ export function useInvitations() {
         }
     })
 
-    return { invitationQuery, updateInviteMutation, updateOnCopy, refetchInvitations, isPending }
+    return { invitationQuery, updateInviteMutation, updateOnCopy, refetchInvitations, isPending, isSuccess }
 }
 

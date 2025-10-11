@@ -8,18 +8,14 @@
         "postcss.config.mjs": true,
         "drizzle.config.ts": true,
         "components.json": true,
-        "biome.json": true,
         "auth-schema.ts": true,
-        ".gitignore": true,
         "bun.lock": true
     },
     "hide-files.files": [
         "postcss.config.mjs",
         "drizzle.config.ts",
         "components.json",
-        "biome.json",
         "auth-schema.ts",
-        ".gitignore",
         "bun.lock"
     ]
 }

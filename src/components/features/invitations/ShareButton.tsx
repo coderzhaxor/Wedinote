@@ -26,6 +26,7 @@ export function ShareButton({ message, phone, variant = "text" }: ShareButtonPro
             className="hover:cursor-pointer"
             onClick={handleShare}
             variant={variant === "icon" ? "outline" : "default"}
+            size={variant === "icon" ? "icon" : "default"}
         >
             {variant === "icon" ? (
                 <Share2 className="h-4 w-4" />
