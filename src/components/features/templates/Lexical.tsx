@@ -96,11 +96,6 @@ export default function Lexical({ onContentChange }: LexicalProps) {
                 {isPreview ? (
                     <Wrapper className='min-h-[200px] w-full p-4 bg-gray-50 border-none leading-relaxed select-all'>
                         {parse(parseWhatsappMarkdown(editorContent.toString()))}
-                        {/* {editorContent.split("</n>").map((line, i) => (
-                            <div key={`preview-line-${i}`}>
-                                {parseWhatsappMarkdown(line)}
-                            </div>
-                        ))} */}
                     </Wrapper>
                 ) : (
                     <RichTextPlugin
@@ -125,6 +120,7 @@ export default function Lexical({ onContentChange }: LexicalProps) {
                         });
                     }}
                 />
+
                 <TemplateInsertPlugin
                     shouldInsert={shouldInsertTemplate}
                     onInserted={handleTemplateInserted}

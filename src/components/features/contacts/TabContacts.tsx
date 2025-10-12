@@ -36,7 +36,7 @@ const TabContacts = () => {
         const value = contactAreaRef.current?.value ?? "";
         if (!value.trim()) return;
 
-        const parsed = parseContacts(value); // parse sekali di UI
+        const parsed = parseContacts(value);
         if (parsed.length === 0) return;
 
         addMutation.mutate(parsed);
@@ -79,8 +79,11 @@ const TabContacts = () => {
                 </p>
 
                 <div className="mt-2 flex items-stretch gap-x-2">
-                    <Button onClick={handleAddContacts} disabled={addMutation.isPending}>
-                        {addMutation.isPending ? "Menyimpan..." : "Tambahkan Daftar Tamu"}
+                    <Button
+                        onClick={handleAddContacts}
+                        disabled={addMutation.isPending}
+                    >
+                        {addMutation.isPending ? "Menyimpan..." : "Tambahkan Tamu"}
                     </Button>
 
                     <FileUpload textareaRef={contactAreaRef} disabled={addMutation.isPending} />

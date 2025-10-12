@@ -13,7 +13,11 @@ export default function TableInfo() {
         <TooltipProvider delayDuration={0}>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button variant="outline" size="icon" className="rounded-full">
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        className="rounded-md size-9"
+                    >
                         <Info />
                     </Button>
                 </TooltipTrigger>

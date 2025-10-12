@@ -25,7 +25,11 @@ export default function TemplateEditor() {
                         Gunakan {"{{nama_variabel}}"} untuk memasukkan variabel ke dalam template.
                     </p>
                     <div className="flex gap-2 mt-6">
-                        <Button onClick={saveTemplate} disabled={addTemplateMutation.isPending}>
+                        <Button
+                            onClick={saveTemplate}
+                            disabled={addTemplateMutation.isPending}
+                            className='w-full sm:w-auto'
+                        >
                             {addTemplateMutation.isPending ? "Menyimpan..." : "Save Template"}
                         </Button>
                     </div>

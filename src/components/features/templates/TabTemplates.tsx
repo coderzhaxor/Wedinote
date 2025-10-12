@@ -113,7 +113,6 @@ const TabTemplates = () => {
                 />
             ))}
             <div className="flex items-center">
-                {/* biome-ignore lint/a11y/useButtonType: false positive */}
                 <button
                     className="flex flex-1 items-center justify-center gap-x-3 border border-dashed rounded-sm py-2 cursor-pointer text-muted-foreground hover:border-primary hover:text-primary transition-colors duration-150 ease-in-out"
                     onClick={addVariables}
@@ -121,7 +120,6 @@ const TabTemplates = () => {
                     <PlusIcon size={16} />
                     Tambahkan Variabel
                 </button>
-                {/* biome-ignore lint/a11y/useButtonType: false positive */}
                 <button
                     onClick={saveVariables}
                     disabled={addVariableMutation.isPending}

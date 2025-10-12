@@ -115,7 +115,7 @@ export default function ToolbarPlugin({ onInsertTemplate, isPreview, onPreview }
     }, [editor]);
 
     return (
-        <div className="flex border-b p-2 items-center justify-between">
+        <div className="flex flex-wrap gap-2 border-b p-2 items-center justify-between">
             <div className="flex items-center gap-1">
                 <Button
                     type="button"
@@ -176,7 +176,7 @@ export default function ToolbarPlugin({ onInsertTemplate, isPreview, onPreview }
                     <Eraser className="w-4 h-4" />
                 </Button>
             </div>
-            <div className="flex gap-1">
+            <div className="flex items-center *:flex-1 w-full sm:w-auto gap-1">
                 <Button
                     type="button"
                     variant="outline"
